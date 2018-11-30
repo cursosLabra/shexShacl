@@ -1,0 +1,88 @@
+prefix :       <http://example.org/> 
+prefix sh:     <http://www.w3.org/ns/shacl#> 
+prefix xsd:    <http://www.w3.org/2001/XMLSchema#>
+prefix schema: <http://schema.org/>
+prefix foaf:   <http://xmlns.com/foaf/0.1/>
+prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>        
+
+:AdultPerson a sh:NodeShape ;
+  sh:targetNode :alice ;
+   sh:property [
+     sh:path rdf:type ;
+     sh:qualifiedValueShape [ 
+       sh:hasValue schema:Person 
+     ] ;
+     sh:qualifiedMinCount 1 ;
+     sh:qualifiedMaxCount 1 ;        
+   ] ;
+   sh:property [
+    sh:path :name ; 
+    sh:minCount 1; 
+    sh:maxCount 1;
+    sh:datatype xsd:string ;
+  ] ;
+  sh:property [
+   sh:path :gender ; 
+   sh:minCount 1; 
+   sh:maxCount 1; 
+   sh:or (
+    [ sh:in (:Male :Female) ]
+    [ sh:datatype xsd:string]
+   ) 
+  ] ;
+  sh:property [
+   sh:path :age ; 
+   sh:minCount 0; 
+   sh:maxCount 1; 
+   sh:minInclusive 18
+  ] ;
+ sh:property [
+   sh:path :address ;
+   sh:node :Address ;
+   sh:minCount 1 ;
+   sh:maxCount 1
+  ] ;
+  sh:property [ 
+    sh:path :worksFor ;
+    sh:node :Company ;
+    sh:minCount 1 ;
+    sh:maxCount 1 
+  ].
+
+:Address a sh:NodeShape ;
+ sh:property 
+ [ sh:path :addressLine;
+   sh:datatype xsd:string ;
+   sh:minCount 1 ; sh:maxCount 3
+ ] ;
+ sh:property [ 
+   sh:path :postalCode ;
+   sh:pattern "[0-9]{5}" ;
+   sh:minCount 1 ; sh:maxCount 3
+ ] ;
+ sh:property [ 
+   sh:path :city ;
+   sh:datatype xsd:string ;
+   sh:minCount 1 ; sh:maxCount 1
+ ] ;
+ sh:property [
+   sh:path :state ;
+   sh:node :State ; 
+ ] .
+:Company a sh:NodeShape ;
+ sh:property [
+   sh:path    :name ;
+   sh:datatype xsd:string 
+   ] ; 
+ sh:property [
+   sh:path :state ;
+   sh:node :State 
+ ] ;
+ sh:property [
+   sh:path :employee ;
+   sh:node :AdultPerson ;
+ ] ;.
+
+:State a sh:NodeShape ;
+ sh:pattern "[A-Z]{2}" .
